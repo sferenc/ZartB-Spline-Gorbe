@@ -26,12 +26,23 @@ void init()
 	glLineWidth(2.0);
 }
 
-void drawBezier(){
-	glColor3f(0.0, 1.0, 0.0);
+void drawBSpline(){
+	glColor3f(0.0, 0.0, 0.0);
 	glBegin(GL_POINTS);
 		for(unsigned int i = 0; i<controlPoints.size(); i++)
 			glVertex2d(controlPoints[i].x,controlPoints[i].y);
 	glEnd();
+	
+	//kontrollPolygon kirajzolása
+	glBegin(GL_LINE_STRIP);
+		for(unsigned int i = 0; i<controlPoints.size(); i++)
+			glVertex2d(controlPoints[i].x,controlPoints[i].y);
+	glEnd();
+	
+	/*if (controlPoints.size() > 2)
+	{
+		TODO B-SPLINE
+	}*/
 }
 
 GLint getActivePoint1(GLint sens, GLint x, GLint y) {
@@ -71,14 +82,8 @@ void processMouseActiveMotion(GLint xMouse, GLint yMouse) { // pont húzása egérr
 void display()
 {	
 	glClear(GL_COLOR_BUFFER_BIT);	
-	
-	
-	if (controlPoints.size() >= 2)
-		{
-			
-			drawBezier();
-		}
-	
+		
+	drawBSpline();
 
 	glutSwapBuffers();
 
@@ -91,7 +96,7 @@ int main(int argc, char** argv)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(winWidth, winHeight);
 	glutInitWindowPosition(100, 100);
-	glutCreateWindow("De Castel Jou");
+	glutCreateWindow("Zart B-Spline");
 	init();
 	glutDisplayFunc(display);
 	glutMouseFunc(processMouse);
