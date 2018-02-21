@@ -26,6 +26,34 @@ void init()
 	glLineWidth(2.0);
 }
 
+void drawBSplineSegment(int i){
+	
+	
+	int n = controlPoints.size(); 
+	
+	mat24 G = { controlPoints[i%n], controlPoints[(i+1)%n], controlPoints[(i+2)%n], controlPoints[(i+3)%n]};
+	vec4 columns[4] = { { -1, 3, -3, 1 },
+						{ 3, -6, 0, 4 },
+						{ -3, 3, 3, 1 },
+						{ 1, 0, 0, 0 } };
+	mat4 M = {columns[0], columns[1], columns[2], columns[3], false };
+	
+	vec2 curvepoint;
+	mat24 GM = G * ( 0.166666 * M);
+	vec4 T;
+
+	
+	glColor3f(0.0, 0.0, 0.0);
+	glBegin(GL_LINE_STRIP);
+	for (float t = 0; t <= 1.05; t = t + 0.1) {
+		T = {t*t*t, t*t, t, 1};
+		curvepoint = GM * T;	
+		glVertex2d(curvepoint.x, curvepoint.y);
+	}
+	glEnd();
+
+}
+
 void drawBSpline(){
 	glColor3f(0.0, 0.0, 0.0);
 	glBegin(GL_POINTS);
@@ -39,10 +67,13 @@ void drawBSpline(){
 			glVertex2d(controlPoints[i].x,controlPoints[i].y);
 	glEnd();
 	
-	/*if (controlPoints.size() > 2)
-	{
-		TODO B-SPLINE
-	}*/
+	//glBegin(GL_LINE_STRIP);
+		if (controlPoints.size() >= 4)
+		{
+			for(unsigned int i=0; i<controlPoints.size();i++)
+				drawBSplineSegment(i);
+		}
+	//glEnd();
 }
 
 GLint getActivePoint1(GLint sens, GLint x, GLint y) {
